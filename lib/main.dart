@@ -62,12 +62,12 @@ class _MyAppState extends State<MyApp> {
                 style: const TextStyle(
                   color: Colors.transparent,
                 )));
-          } else if (!isCorrect && promtString[inputString.length - 1] == ' ') {
-            spans.add(TextSpan(
-                text: '_',
-                style: TextStyle(
-                  color: Constants.wrongColor,
-                )));
+            // } else if (!isCorrect && promtString[inputString.length - 1] == ' ') {
+            //   spans.add(TextSpan(
+            //       text: '_',
+            //       style: TextStyle(
+            //         color: Constants.wrongColor,
+            //       )));
           } else {
             spans.add(TextSpan(
                 text: promtString[inputString.length - 1],

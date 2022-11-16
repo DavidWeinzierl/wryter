@@ -12,7 +12,7 @@ class PromtGenerator {
     // words ;
     for (var i = 0; i < maxWordCount; i++) {
       buffer.write(nouns[i]);
-      buffer.write('_');
+      buffer.write(' ');
       wordCount++;
     }
     return buffer.toString();
