@@ -36,33 +36,64 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // counter = _textController.text.length;
+// make sure only one key input is accepted if tow keys are pressed at the same time
+    while (_textController.text.length > counter + 1) {
+      _textController.value = TextEditingValue(
+        text:
+            _textController.text.substring(0, _textController.text.length - 1),
+        selection: TextSelection.collapsed(offset: _textController.text.length),
+      );
+    }
 
-    if (_textController.text.length > inputString.length) {
-      inputString += _textController.text[_textController.text.length - 1];
+// take care of backspace
+    while (_textController.text.length < counter) {
+      spans[counter - 1] = TextSpan(
+          text: spans[counter - 1].text,
+          style: TextStyle(
+              color: (spans[counter - 1].text == '_')
+                  ? Colors.transparent
+                  : Constants.promtTextColor));
+
       counter = _textController.text.length;
 
-      if (inputString != '') {
-        isCorrect = (_textController.text[counter - 1] == spans[counter - 1])
-            ? true
-            : false;
+      //todo check if \n to revert down animation
+    }
 
-        if (isCorrect) {
-          String? s = spans[counter].text;
-          spans.add(
-            TextSpan(
-              text: spans[counter].text,
-              style: const TextStyle(color: Colors.green),
-            ),
-          );
-          spans.removeAt(counter + 5);
+// check if text change is due to key input and not due to TC.text change or backspace
+    if (_textController.text.length > counter) {
+      counter = _textController.text.length;
+
+// 	check isCorrect
+      isCorrect =
+          (spans[counter - 1].text == _textController.text[counter - 1] ||
+                  (spans[counter - 1].text == '_' &&
+                      _textController.text[counter - 1] == ' '))
+              ? true
+              : false;
+
+// 	true: span green
+      if (isCorrect) {
+        if (!(spans[counter - 1].text == '_')) {
+          spans[counter - 1] = TextSpan(
+              text: spans[counter - 1].text,
+              style:
+                  TextStyle(color: Constants.promtTextColor.withOpacity(0.2)));
         }
-      } else {
-// remove spans if backspace was pressed
-        // while (spans.length > inputString.length) {
-        // spans.removeAt(spans.length - 1);
-        // }
       }
+// 	false spans: red
+      else {
+        spans[counter - 1] = TextSpan(
+            text: spans[counter - 1].text,
+            style: TextStyle(color: Constants.wrongColor));
+      }
+
+//replace last char of TC.text with promt
+      _textController.value = TextEditingValue(
+        text:
+            _textController.text.substring(0, _textController.text.length - 1) +
+                spans[counter - 1].text!,
+        selection: TextSelection.collapsed(offset: _textController.text.length),
+      );
     }
 
     return MaterialApp(
@@ -82,28 +113,33 @@ class _MyAppState extends State<MyApp> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text(
-                    'Wryter_',
-                    style: TextStyle(
-                      fontSize: 100,
-                      letterSpacing: 5,
-                      fontWeight: FontWeight.bold,
-                      color: Constants.promtTextColor,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 50.0),
+                    child: Text(
+                      'Wryter_',
+                      style: TextStyle(
+                        fontSize: 100,
+                        letterSpacing: 5,
+                        fontWeight: FontWeight.bold,
+                        color: Constants.promtTextColor,
+                      ),
                     ),
                   ),
 //Stack
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 50),
                     child: SizedBox(
-                      height: 150,
+                      height: 270,
                       width: 1000,
                       child: Stack(
                         children: [
 //prompt
                           RichText(
-                            maxLines: 3,
+                            maxLines: 5,
                             softWrap: true,
-                            textAlign: TextAlign.center,
+                            key: UniqueKey(),
+                            // textAlign: TextAlign.center,
                             text: TextSpan(
                               children: spans,
                               style: const TextStyle(fontSize: 45),
@@ -112,7 +148,7 @@ class _MyAppState extends State<MyApp> {
 
 //input textfield
                           TextField(
-                            maxLines: 3,
+                            maxLines: 5,
                             cursorColor: Constants.cursorColor,
                             cursorWidth: 4,
                             cursorRadius: const Radius.circular(2),
@@ -125,53 +161,20 @@ class _MyAppState extends State<MyApp> {
                               color: Colors.transparent,
                             ),
                           ),
-// shaded cover text
-                          // ShaderMask(
-                          //   shaderCallback: (bounds) => Constants
-                          //       .myLinearGradientDark
-                          //       .createShader(Rect.fromPoints(
-                          //           const Offset(0, 0),
-                          //           // Offset(MediaQuery.of(context).size.width,
-                          //           //     MediaQuery.of(context).size.height))),
-                          //           const Offset(750 / 2.5, 1480 / 3))),
-                          //   child: Text(
-                          //     _textController.text,
-                          //     style: const TextStyle(
-                          //         fontSize: 45, color: Colors.white),
-                          //   ),
-                          // ),
+//
                         ],
                       ),
                     ),
                   ),
 
-                  const SizedBox(
-                    height: 150,
-                  ),
-                  // ShaderMask(
-                  //   shaderCallback: (bounds) =>
-                  //       Constants.myLinearGradient.createShader(bounds),
-                  //   child: Text(
-                  //     'Test Text zum testen',
-                  //     style: TextStyle(
-                  //         fontSize: 45, color: Colors.cyan.withOpacity(0.3)),
-                  //   ),
-                  // )
-                  // Text(
-                  //     'Input string:    $inputString \ninput counter: $counter \niscorrect = $isCorrect \nmyCharP: ${promtString[counter]}\nspans length: ${spans.length}'),
-                  // Text((inputString == '') ? 'empty' : inputString[counter]),
-                  // Text(
-                  //   'TextController:    ${_textController.text} \n TextControllerLength:    ${_textController.text.length}',
-                  // ),
-                  // Text((inputString == '') ? 'empty' : inputString[counter]),
                   Text(isCorrect.toString()),
                   Text(inputString),
-                  Text(_textController.text.length.toString()),
+                  Text('counter: $counter'),
+                  Text('_textController: ${_textController.text.length}'),
                   Text(_textController.text),
                 ],
               ),
             ),
-            // Container(color: Colors.red, height: 750, width: 1480)
           ],
         ),
       ),

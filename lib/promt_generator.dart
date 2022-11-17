@@ -6,27 +6,13 @@ class PromtGenerator {
   // List<String> words = [];
 
   int wordCount = 0;
-  int maxWordCount = 25;
+  int maxWordCount = 50;
   int lettersInThisRow = 0;
   var shuffledNouns = nouns.toList()..shuffle();
 
   // var buffer = StringBuffer();
 
   List<TextSpan> spans = [];
-
-  // String generatePromt() {
-  //   // words ;
-  //   for (var i = 0; i < maxWordCount; i++) {
-  //     buffer.write(nouns[i]);
-  //     buffer.write('_');
-  //     wordCount++;
-  //   }
-  //   return buffer.toString();
-  // }
-
-  // void changeColor(int i) {
-  //   spans[i].style?.color = Colors.green;
-  // }
 
   List<TextSpan> generatePromtSpans() {
     for (var i = 0; i < maxWordCount; i++) {
@@ -40,19 +26,20 @@ class PromtGenerator {
         lettersInThisRow++;
       }
 
-      spans.add(
-        const TextSpan(
-          text: '_',
-          style: TextStyle(color: Colors.transparent),
-        ),
-      );
-      if (lettersInThisRow > 30) {
+      if (lettersInThisRow + shuffledNouns[wordCount + 1].length > 40) {
         spans.add(
           const TextSpan(
             text: '\n',
           ),
         );
         lettersInThisRow = 0;
+      } else {
+        spans.add(
+          const TextSpan(
+            text: '_',
+            style: TextStyle(color: Colors.transparent),
+          ),
+        );
       }
 
       wordCount++;
