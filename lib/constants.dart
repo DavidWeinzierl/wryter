@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Constants {
+  static double animationOffset = 53;
   static Color? bgColor = const Color.fromARGB(255, 13, 13, 13);
 
   // static Color promtTextColor = const Color.fromARGB(255, 165, 169, 190);

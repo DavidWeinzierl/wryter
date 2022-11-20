@@ -52,8 +52,6 @@ class Validator {
                   color: Constants.wrongColor,
                 )));
 
-//TODO: Check for whitespace and enter underscore if wrong
-
 //change textfield to correct text to keep curser in correct position and set cursor to end of line
             textController.value = TextEditingValue(
               text: promtString.substring(0, inputString.length),

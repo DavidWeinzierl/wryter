@@ -3,37 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:wryter/constants.dart';
 
 class PromtGenerator {
-  // List<String> words = [];
-
-  int wordCount = 0;
-  int maxWordCount = 50;
-  int lettersInThisRow = 0;
-  var shuffledNouns = nouns.toList()..shuffle();
-
-  // var buffer = StringBuffer();
+  int maxLetters = 45;
+  int minLetters = 42;
 
   List<TextSpan> spans = [];
 
-  List<TextSpan> generatePromtSpans() {
-    for (var i = 0; i < maxWordCount; i++) {
-      for (var j = 0; j < shuffledNouns[wordCount].length; j++) {
-        spans.add(
-          TextSpan(
-            text: shuffledNouns[wordCount][j],
-            style: TextStyle(color: Constants.promtTextColor),
-          ),
-        );
-        lettersInThisRow++;
-      }
+  List<TextSpan> generateNewPromtLine(List<TextSpan> wrongWords) {
+    spans.clear();
+    spans.addAll(wrongWords);
 
-      if (lettersInThisRow + shuffledNouns[wordCount + 1].length > 40) {
-        spans.add(
-          const TextSpan(
-            text: '\n',
-          ),
-        );
-        lettersInThisRow = 0;
-      } else {
+    while (spans.length < minLetters) {
+      var randomNoun = (nouns.toList()..shuffle()).first;
+
+      if (randomNoun.length < maxLetters - spans.length) {
+        for (var i = 0; i < randomNoun.length; i++) {
+          spans.add(
+            TextSpan(
+              text: randomNoun[i],
+              style: TextStyle(color: Constants.promtTextColor),
+            ),
+          );
+        }
         spans.add(
           const TextSpan(
             text: '_',
@@ -41,9 +31,11 @@ class PromtGenerator {
           ),
         );
       }
-
-      wordCount++;
     }
+    // replace the last ' ' with \n
+    spans[spans.length - 1] = const TextSpan(
+      text: '\n',
+    );
 
     return spans;
   }
